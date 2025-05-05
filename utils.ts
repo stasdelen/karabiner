@@ -206,6 +206,22 @@ export function rectangle(name: string): LayerCommand {
 }
 
 /**
+ * Shortcut for sending a yabai command
+ *
+ * @param action The yabai subcommand and flags, e.g. "window --toggle float"
+ * @param description Optional description to show in Karabiner
+ */
+export function yabai(action: string, description?: string): LayerCommand {
+  return {
+    to: [
+      {
+        shell_command: `yabai -m ${action}`,
+      },
+    ],
+    description: description ?? `Yabai: ${action}`,
+  };
+}
+/**
  * Shortcut for "Open an app" command (of which there are a bunch)
  */
 export function app(name: string): LayerCommand {
