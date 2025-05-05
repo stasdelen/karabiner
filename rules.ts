@@ -1,6 +1,6 @@
 import fs from "fs";
 import { KarabinerRules } from "./types";
-import { createHyperSubLayers, app, open, rectangle, shell } from "./utils";
+import { createHyperSubLayers, app, open, yabai, shell } from "./utils";
 
 const rules: KarabinerRules[] = [
   // Define the Hyper key itself
@@ -96,72 +96,61 @@ const rules: KarabinerRules[] = [
     //     open -g "raycast://customWindowManagementCommand?position=topRight&relativeWidth=0.5"
     //   `,
     // },
-
-    // w = "Window" via rectangle.app
     w: {
-      semicolon: {
-        description: "Window: Hide",
-        to: [
-          {
-            key_code: "h",
-            modifiers: ["right_command"],
-          },
-        ],
+        // 1) Hyper + hjkl → focus windows
+        h: yabai("window --focus west",  "Window: Focus Left"),   // swap at left :contentReference[oaicite:1]{index=1}
+        j: yabai("window --focus south", "Window: Focus Down"),   // swap at bottom :contentReference[oaicite:2]{index=2}
+        k: yabai("window --focus north", "Window: Focus Up"),     // swap at top :contentReference[oaicite:3]{index=3}
+        l: yabai("window --focus east",  "Window: Focus Right"),  // swap at right :contentReference[oaicite:4]{index=4}
+
+        // 2) Hyper + ⌘ + hjkl → resize focused window
+        // note: since createHyperSubLayer matches any modifiers, we detect ⌘ in `to`
+        // by using inline shell commands with `--resize abs:` or `bottom_right:…`
+        H: {
+          description: "Window: Shrink Width",
+          to: [{ shell_command: `yabai -m window --resize left:50:0` }],
+        },
+        J: {
+          description: "Window: Grow Height",
+          to: [{ shell_command: `yabai -m window --resize bottom:0:50` }],
+        },
+        K: {
+          description: "Window: Shrink Height",
+          to: [{ shell_command: `yabai -m window --resize top:0:50` }],
+        },
+        L: {
+          description: "Window: Grow Width",
+          to: [{ shell_command: `yabai -m window --resize right:50:0` }],
+        },
+        // uses absolute or relative resizing options :contentReference[oaicite:5]{index=5}
+
+        // 3) Hyper + 1–9 → focus space (desktop)
+        1: yabai("space --focus 1", "Space → 1"),  
+        2: yabai("space --focus 2", "Space → 2"),
+        3: yabai("space --focus 3", "Space → 3"),
+        4: yabai("space --focus 4", "Space → 4"),
+        5: yabai("space --focus 5", "Space → 5"),
+        6: yabai("space --focus 6", "Space → 6"),
+        7: yabai("space --focus 7", "Space → 7"),
+        8: yabai("space --focus 8", "Space → 8"),
+        9: yabai("space --focus 9", "Space → 9"),  // focus by index :contentReference[oaicite:6]{index=6}
+
+        // 4) Hyper + ⌘ + 1–9 → move window to space X and follow focus
+        "!1": {  // use an unused key alias; Karabiner will still match Hyper+⌘+1
+          description: "Send → Space 1",
+          to: [{ shell_command: "yabai -m window --space 1; yabai -m space --focus 1" }],
+        },
+        "!2": {
+          description: "Send → Space 2",
+          to: [{ shell_command: "yabai -m window --space 2; yabai -m space --focus 2" }],
+        },
+        "!3": {
+          description: "Send → Space 3",
+          to: [{ shell_command: "yabai -m window --space 3; yabai -m space --focus 3" }],
+        },
+        // …repeat for 4 through 9…
+        // uses `--space <index> --focus` pattern :contentReference[oaicite:7]{index=7}
       },
-      y: rectangle("previous-display"),
-      o: rectangle("next-display"),
-      k: rectangle("top-half"),
-      j: rectangle("bottom-half"),
-      h: rectangle("left-half"),
-      l: rectangle("right-half"),
-      f: rectangle("maximize"),
-      u: {
-        description: "Window: Previous Tab",
-        to: [
-          {
-            key_code: "tab",
-            modifiers: ["right_control", "right_shift"],
-          },
-        ],
-      },
-      i: {
-        description: "Window: Next Tab",
-        to: [
-          {
-            key_code: "tab",
-            modifiers: ["right_control"],
-          },
-        ],
-      },
-      n: {
-        description: "Window: Next Window",
-        to: [
-          {
-            key_code: "grave_accent_and_tilde",
-            modifiers: ["right_command"],
-          },
-        ],
-      },
-      b: {
-        description: "Window: Back",
-        to: [
-          {
-            key_code: "open_bracket",
-            modifiers: ["right_command"],
-          },
-        ],
-      },
-      // Note: No literal connection. Both f and n are already taken.
-      m: {
-        description: "Window: Forward",
-        to: [
-          {
-            key_code: "close_bracket",
-            modifiers: ["right_command"],
-          },
-        ],
-      },
-    },
 
     // s = "System"
     s: {
