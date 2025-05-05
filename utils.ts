@@ -215,7 +215,7 @@ export function yabai(action: string, description?: string): LayerCommand {
   return {
     to: [
       {
-        shell_command: `yabai -m ${action}`,
+        shell_command: `/opt/homebrew/bin/yabai -m ${action}`,
       },
     ],
     description: description ?? `Yabai: ${action}`,
