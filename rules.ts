@@ -137,8 +137,6 @@ const rules: KarabinerRules[] = [
         to: [{ key_code: "page_up" }],
       },
     },
-
-    },
   }),
 ];
 
