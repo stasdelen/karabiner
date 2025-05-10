@@ -1,6 +1,6 @@
 import fs from "fs";
 import { KarabinerRules } from "./types";
-import { createHyperSubLayers, app, open, newSafariWindow, newTerminalWindow, newFinderWindow, yabai, shell } from "./utils";
+import { createHyperSubLayers, app, open, newSafariWindow, newTerminalWindow, newFinderWindow, yabai, yabaiMoveWindow, shell } from "./utils";
 
 const rules: KarabinerRules[] = [
   // Define the Hyper key itself
@@ -74,7 +74,7 @@ const rules: KarabinerRules[] = [
     // b = "B"rowse
     b: {
       t: open("https://twitter.com"),
-      y: open("https://news.ycombinator.com"),
+      y: open("https://youtube.com"),
       f: open("https://facebook.com"),
       r: open("https://reddit.com"),
     },
@@ -98,9 +98,7 @@ const rules: KarabinerRules[] = [
     },
     w: {
 
-        // 2) Hyper + ⌘ + hjkl → resize focused window
-        // note: since createHyperSubLayer matches any modifiers, we detect ⌘ in `to`
-        // by using inline shell commands with `--resize abs:` or `bottom_right:…`
+        // 2) Hyper + shift + hjkl → resize focused window
         H: {
           description: "Window: Shrink Width",
           to: [{ shell_command: `yabai -m window --resize left:50:0` }],
@@ -117,29 +115,21 @@ const rules: KarabinerRules[] = [
           description: "Window: Grow Width",
           to: [{ shell_command: `yabai -m window --resize right:50:0` }],
         },
-        // uses absolute or relative resizing options :contentReference[oaicite:5]{index=5}
-
-
-        // 4) Hyper + ⌘ + 1–9 → move window to space X and follow focus
-        "!1": {  // use an unused key alias; Karabiner will still match Hyper+⌘+1
-          description: "Send → Space 1",
-          to: [{ shell_command: "yabai -m window --space 1; yabai -m space --focus 1" }],
-        },
-        "!2": {
-          description: "Send → Space 2",
-          to: [{ shell_command: "yabai -m window --space 2; yabai -m space --focus 2" }],
-        },
-        "!3": {
-          description: "Send → Space 3",
-          to: [{ shell_command: "yabai -m window --space 3; yabai -m space --focus 3" }],
-        },
-        // …repeat for 4 through 9…
-        // uses `--space <index> --focus` pattern :contentReference[oaicite:7]{index=7}
       },
 
     // v = "moVe" which isn't "m" because we want it to be on the left hand
     // so that hjkl work like they do in vim
     v: {
+      // 4) Hyper + 1–9 → move window to space X and follow focus
+      "1": yabaiMoveWindow("1", "Send → Space 1"), 
+      "2": yabaiMoveWindow("2", "Send → Space 2"),
+      "3": yabaiMoveWindow("3", "Send → Space 3"),
+      "4": yabaiMoveWindow("4", "Send → Space 4"),
+      "5": yabaiMoveWindow("5", "Send → Space 5"),
+      "6": yabaiMoveWindow("6", "Send → Space 6"),
+      "7": yabaiMoveWindow("7", "Send → Space 7"),
+      "8": yabaiMoveWindow("8", "Send → Space 8"),
+      "9": yabaiMoveWindow("9", "Send → Space 9"),
       h: {
         to: [{ key_code: "left_arrow" }],
       },
