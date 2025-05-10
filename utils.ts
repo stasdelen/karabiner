@@ -233,20 +233,6 @@ export function shell(
 }
 
 /**
- * Shortcut for managing window sizing with Rectangle
- */
-export function rectangle(name: string): LayerCommand {
-  return {
-    to: [
-      {
-        shell_command: `open -g rectangle://execute-action?name=${name}`,
-      },
-    ],
-    description: `Window: ${name}`,
-  };
-}
-
-/**
  * Shortcut for sending a yabai command
  *
  * @param action The yabai subcommand and flags, e.g. "window --toggle float"
@@ -262,9 +248,21 @@ export function yabai(action: string, description?: string): LayerCommand {
     description: description ?? `Yabai: ${action}`,
   };
 }
+
+export function yabaiMoveWindow(number: string, description?: string): LayerCommand {
+  return {
+    to: [
+      {
+        shell_command: `/opt/homebrew/bin/yabai -m window --space ${number}; /opt/homebrew/bin/yabai -m space --focus ${number}`, 
+      },
+    ],
+    description: description ?? `Yabai to window: ${number}`,
+  };
+}
+
 /**
  * Shortcut for "Open an app" command (of which there are a bunch)
- */
+ **/
 export function app(name: string): LayerCommand {
   return open(`-a '${name}.app'`);
 }
