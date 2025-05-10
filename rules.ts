@@ -1,6 +1,6 @@
 import fs from "fs";
 import { KarabinerRules } from "./types";
-import { createHyperSubLayers, app, open, yabai, shell } from "./utils";
+import { createHyperSubLayers, app, open, newSafariWindow, newTerminalWindow, newFinderWindow, yabai, shell } from "./utils";
 
 const rules: KarabinerRules[] = [
   // Define the Hyper key itself
@@ -56,52 +56,47 @@ const rules: KarabinerRules[] = [
     ],
   },
   ...createHyperSubLayers({
-    spacebar: open(
-      "raycast://extensions/stellate/mxstbr-commands/create-notion-todo"
-    ),
+    // 1) Hyper + hjkl → focus windows
+    h: yabai("window --focus west",  "Window: Focus Left"),
+    j: yabai("window --focus south", "Window: Focus Down"),
+    k: yabai("window --focus north", "Window: Focus Up"),
+    l: yabai("window --focus east",  "Window: Focus Right"),
+    // 3) Hyper + 1–9 → focus space (desktop)
+    1: yabai("space --focus 1", "Space → 1"),  
+    2: yabai("space --focus 2", "Space → 2"),
+    3: yabai("space --focus 3", "Space → 3"),
+    4: yabai("space --focus 4", "Space → 4"),
+    5: yabai("space --focus 5", "Space → 5"),
+    6: yabai("space --focus 6", "Space → 6"),
+    7: yabai("space --focus 7", "Space → 7"),
+    8: yabai("space --focus 8", "Space → 8"),
+    9: yabai("space --focus 9", "Space → 9"),  // focus by index :contentReference[oaicite:6]{index=6}
     // b = "B"rowse
     b: {
       t: open("https://twitter.com"),
-      // Quarterly "P"lan
-      p: open("https://mxstbr.com/cal"),
       y: open("https://news.ycombinator.com"),
       f: open("https://facebook.com"),
       r: open("https://reddit.com"),
-      h: open("https://hashnode.com/draft"),
     },
     // o = "Open" applications
     o: {
       b: app("Bitwarden"),
-      g: app("Safari"),
+      s: app("Safari"),
       c: app("Calendar"),
       d: app("Discord"),
       k: app("Slack"),
       t: app("Terminal"),
       f: app("Finder"),
-      s: app("Spotify"),
+      p: app("Spotify"),
       w: open("WhatsApp"),
     },
 
-    // TODO: This doesn't quite work yet.
-    // l = "Layouts" via Raycast's custom window management
-    // l: {
-    //   // Coding layout
-    //   c: shell`
-    //     open -a "Visual Studio Code.app"
-    //     sleep 0.2
-    //     open -g "raycast://customWindowManagementCommand?position=topLeft&relativeWidth=0.5"
-
-    //     open -a "Terminal.app"
-    //     sleep 0.2
-    //     open -g "raycast://customWindowManagementCommand?position=topRight&relativeWidth=0.5"
-    //   `,
-    // },
+    n: {
+      g: newSafariWindow(),
+      t: newTerminalWindow(),
+      f: newFinderWindow(),
+    },
     w: {
-        // 1) Hyper + hjkl → focus windows
-        h: yabai("window --focus west",  "Window: Focus Left"),   // swap at left :contentReference[oaicite:1]{index=1}
-        j: yabai("window --focus south", "Window: Focus Down"),   // swap at bottom :contentReference[oaicite:2]{index=2}
-        k: yabai("window --focus north", "Window: Focus Up"),     // swap at top :contentReference[oaicite:3]{index=3}
-        l: yabai("window --focus east",  "Window: Focus Right"),  // swap at right :contentReference[oaicite:4]{index=4}
 
         // 2) Hyper + ⌘ + hjkl → resize focused window
         // note: since createHyperSubLayer matches any modifiers, we detect ⌘ in `to`
@@ -124,16 +119,6 @@ const rules: KarabinerRules[] = [
         },
         // uses absolute or relative resizing options :contentReference[oaicite:5]{index=5}
 
-        // 3) Hyper + 1–9 → focus space (desktop)
-        1: yabai("space --focus 1", "Space → 1"),  
-        2: yabai("space --focus 2", "Space → 2"),
-        3: yabai("space --focus 3", "Space → 3"),
-        4: yabai("space --focus 4", "Space → 4"),
-        5: yabai("space --focus 5", "Space → 5"),
-        6: yabai("space --focus 6", "Space → 6"),
-        7: yabai("space --focus 7", "Space → 7"),
-        8: yabai("space --focus 8", "Space → 8"),
-        9: yabai("space --focus 9", "Space → 9"),  // focus by index :contentReference[oaicite:6]{index=6}
 
         // 4) Hyper + ⌘ + 1–9 → move window to space X and follow focus
         "!1": {  // use an unused key alias; Karabiner will still match Hyper+⌘+1
@@ -151,79 +136,6 @@ const rules: KarabinerRules[] = [
         // …repeat for 4 through 9…
         // uses `--space <index> --focus` pattern :contentReference[oaicite:7]{index=7}
       },
-
-    // s = "System"
-    s: {
-      u: {
-        to: [
-          {
-            key_code: "volume_increment",
-          },
-        ],
-      },
-      j: {
-        to: [
-          {
-            key_code: "volume_decrement",
-          },
-        ],
-      },
-      i: {
-        to: [
-          {
-            key_code: "display_brightness_increment",
-          },
-        ],
-      },
-      k: {
-        to: [
-          {
-            key_code: "display_brightness_decrement",
-          },
-        ],
-      },
-      l: {
-        to: [
-          {
-            key_code: "q",
-            modifiers: ["right_control", "right_command"],
-          },
-        ],
-      },
-      p: {
-        to: [
-          {
-            key_code: "play_or_pause",
-          },
-        ],
-      },
-      semicolon: {
-        to: [
-          {
-            key_code: "fastforward",
-          },
-        ],
-      },
-      e: open(
-        `raycast://extensions/thomas/elgato-key-light/toggle?launchType=background`
-      ),
-      // "D"o not disturb toggle
-      d: open(
-        `raycast://extensions/yakitrak/do-not-disturb/toggle?launchType=background`
-      ),
-      // "T"heme
-      t: open(`raycast://extensions/raycast/system/toggle-system-appearance`),
-      c: open("raycast://extensions/raycast/system/open-camera"),
-      // 'v'oice
-      v: {
-        to: [
-          {
-            key_code: "spacebar",
-            modifiers: ["left_option"],
-          },
-        ],
-      },
-    },
 
     // v = "moVe" which isn't "m" because we want it to be on the left hand
     // so that hjkl work like they do in vim
@@ -272,55 +184,7 @@ const rules: KarabinerRules[] = [
         to: [{ key_code: "rewind" }],
       },
     },
-
-    // r = "Raycast"
-    r: {
-      c: open("raycast://extensions/thomas/color-picker/pick-color"),
-      n: open("raycast://script-commands/dismiss-notifications"),
-      l: open(
-        "raycast://extensions/stellate/mxstbr-commands/create-mxs-is-shortlink"
-      ),
-      e: open(
-        "raycast://extensions/raycast/emoji-symbols/search-emoji-symbols"
-      ),
-      p: open("raycast://extensions/raycast/raycast/confetti"),
-      a: open("raycast://extensions/raycast/raycast-ai/ai-chat"),
-      s: open("raycast://extensions/peduarte/silent-mention/index"),
-      h: open(
-        "raycast://extensions/raycast/clipboard-history/clipboard-history"
-      ),
-      1: open(
-        "raycast://extensions/VladCuciureanu/toothpick/connect-favorite-device-1"
-      ),
-      2: open(
-        "raycast://extensions/VladCuciureanu/toothpick/connect-favorite-device-2"
-      ),
-    },
   }),
-  {
-    description: "Change Backspace to Spacebar when Minecraft is focused",
-    manipulators: [
-      {
-        type: "basic",
-        from: {
-          key_code: "delete_or_backspace",
-        },
-        to: [
-          {
-            key_code: "spacebar",
-          },
-        ],
-        conditions: [
-          {
-            type: "frontmost_application_if",
-            file_paths: [
-              "^/Users/mxstbr/Library/Application Support/minecraft/runtime/java-runtime-gamma/mac-os-arm64/java-runtime-gamma/jre.bundle/Contents/Home/bin/java$",
-            ],
-          },
-        ],
-      },
-    ],
-  },
 ];
 
 fs.writeFileSync(

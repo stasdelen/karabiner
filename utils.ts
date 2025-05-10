@@ -166,6 +166,47 @@ export function open(...what: string[]): LayerCommand {
   };
 }
 
+/** Always open a brand-new window of that app */
+export function newWindow(app: string): LayerCommand {
+  // “reopen” will send the standard reopen event,
+  // which in most apps opens a fresh window.
+  const cmd = `osascript -e 'tell application "${app}" to reopen'`;
+  return {
+    to: [{ shell_command: cmd }],
+    description: `App: New ${app} Window`,
+  };
+}
+
+export function newSafariWindow(): LayerCommand {
+  return {
+    to: [{
+      shell_command: `osascript -e 'tell application "Safari" to make new document'`
+    }],
+    description: `App: New Safari Window`,
+  };
+}
+
+export function newTerminalWindow(): LayerCommand {
+  return {
+    to: [{
+      shell_command: `osascript -e 'tell application "Terminal" to do script ""'`
+    }],
+    description: `Terminal: New Window`,
+  };
+}
+
+/**
+ * Always open a brand-new Finder window
+ */
+export function newFinderWindow(): LayerCommand {
+  return {
+    to: [{
+      shell_command: `osascript -e 'tell application "Finder" to make new Finder window'`
+    }],
+    description: `Finder: New Window`,
+  };
+}
+
 /**
  * Utility function to create a LayerCommand from a tagged template literal
  * where each line is a shell command to be executed.
