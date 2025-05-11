@@ -77,7 +77,7 @@ const rules: KarabinerRules[] = [
     },
 
     n: {
-      g: newSafariWindow(),
+      s: newSafariWindow(),
       t: newTerminalWindow(),
       f: newFinderWindow(),
     },
